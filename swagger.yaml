@@ -1,0 +1,564 @@
+openapi: 3.0.3
+info:
+  title: Swagger 
+  version: 1.0.11
+tags:
+  - name: Авторизация
+    description: Включает эндпоинты авторизации, регистрации и логаута
+  - name: Задачи
+    description: Включает эндпоинты с задачами
+  - name: Проекты
+    description: Включает эндпоинты с проектами
+  - name: Профиль
+    description: Включает эндпоинты профиля  
+paths:
+  /registartion:
+    post:
+      tags:
+       - Авторизация
+      summary: Регистрация пользователя
+      requestBody:
+        description: Регистрирует пользователя
+        content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/Registration'
+        required: true
+      responses:
+        '200':
+          description: Регистрация прошла успешно
+        '400':
+          description: Некорректный запрос
+  /auth:
+    post:
+      tags:
+       - Авторизация
+      summary: Авторизует пользователя
+      requestBody:
+        description: Авторизует пользователя
+        content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/Auth'
+        required: true
+      responses:
+        '200':
+          description: Авторизация прошла успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tokens'          
+        '400':
+          description: Неправильно введен логин или пароль
+  /projects:
+    get:
+      tags:
+       - Проекты
+      summary: 'Получает список проектов'
+      responses:
+        '200':
+          description: Список актуальных проектов получен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectList'
+        '403':
+          description: Что-то пошло не так. Попробуйте снова
+  /search/projects:
+    get:
+      tags:
+       - Проекты
+      summary: Предоставляет список проектов по поиску пользователя
+      parameters:
+        - name: title
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200': 
+          description: Список искомых проектов получен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectList'
+        '403':
+          description: Что-то пошло не так. Попробуйте снова
+  /create/project:
+    post:
+      tags:
+       - Проекты
+      summary: Создает проект
+      requestBody:
+        description: 'Атрибуты создаваемого проекта'
+        content:
+          application/json:
+            schema:
+             $ref: '#/components/schemas/CreateProject'
+      responses:
+        '200':
+          description: 'Операция прошла успешно'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectID' 
+        '400':
+          description: 'Передан некорректный запрос'
+  /project:
+    delete:
+      tags:
+        - Проекты
+      summary: Удаляет проект
+      parameters:
+        - name: projectID
+          in: query
+          required: true
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: 'Операция прошла успешно'
+        '400':
+          description: 'Передан некорректный запрос'
+        '404':
+          description: 'Проект с таким ID не найден'
+  /tasks:
+    get:
+      tags:
+        - Задачи
+      summary: 'Получает список задач'
+      responses:
+        '200':
+          description: Список актуальных проектов получен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskList'
+        '403':
+          description: Что-то пошло не так. Попробуйте снова
+  /create/task:
+    post:
+      tags:
+        - Задачи
+      summary: Создает задачу
+      requestBody:
+        description: 'Атрибуты создаваемой задачи'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTask'
+      responses:
+        '200':
+          description: 'Операция прошла успешно'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskID' 
+        '400':
+          description: 'Передан некорректный запрос'
+  /task:
+    delete:
+      tags:
+        - Задачи
+      summary: Удаляет задачу
+      parameters:
+        - name: taskID
+          in: query
+          required: true
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: 'Операция прошла успешно'
+        '400':
+          description: 'Передан некорректный запрос'
+        '404':
+          description: 'Задача с таким ID не найден'
+  /search/tasks:
+    get:
+      tags:
+       - Задачи
+      summary: Предоставляет список задач по поиску пользователя
+      parameters:
+        - name: title
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200': 
+          description: Список искомых проектов получен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskList'
+        '403':
+          description: Что-то пошло не так. Попробуйте снова
+  /kanban/board:
+    get:
+      tags:
+       - Задачи
+      summary: Предоставляет Канбан доску пользователю
+      responses:
+        '200':
+          description: Операция прошла успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KanbanBoard'
+        '403':
+          description: Что-то пошло не так. Попробуйте снова
+  /profile:
+    get:
+      tags:
+        - Профиль
+      summary: Предоставляет профиль пользователю
+      responses:
+        '200':
+          description: Операция прошла успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '403':
+          description: Что-то пошло не так. Попробуйте снова
+  /edit/profile:
+    post:
+      tags:
+        - Профиль
+      summary: Предоставляет возможность редактировать пользователю профиль !!!В зависимости от того, какие поля будут изменяться их и нужно будет передавать, вместе с ID клиента, не изменяемые поля остаются прежними и не затрагиваются.!!!
+      parameters:
+        - name: UserID
+          in: query
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+          example: 2
+      responses:
+        '200':
+          description: Данные успешно обновлены
+        '400':
+          description: Некорректный запрос
+  /logout:
+    post:
+      tags:
+       - Авторизация
+      summary: Выполняет логаут
+      responses:
+        '200':
+          description: Логаут выполнен успешно
+        '403':
+          description: Что-то пошло не так. Попробуйте снова
+        '401':
+          description: Пользователь не авторизован
+components:
+  schemas:
+    Registration:
+      required:
+        - login
+        - password
+        - email
+        - name
+        - lastName
+      type: object
+      properties:
+        login:
+          type: string
+          example: "ivan_ivanov"
+        password:
+          type: string
+          example: GH567fjbvk
+        email:
+          type: string
+          example: "ivanov@mail.ru"
+        name:
+          type: string
+          example: "Иван"
+        lastname:
+          type: string
+          example: "Иванов"
+        secondName:
+          type: string
+          example: "Иванович"
+    Auth:
+      required:
+        - login
+        - password
+      type: object
+      properties:
+        login:
+          type: string
+          example: "ivanov@mail.ru"
+        password:
+          type: string
+          example: GH567fjbvk
+    ProjectList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Project'
+    Project:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Adoddle"
+        status:
+          type: string
+          example: "Completed"
+        description:
+          type: string
+          example: "Lorem ipsum..."
+        deadline:
+          type: string
+          example: "Deadline: 5 April 2023"
+        avatar_url:
+          type: array
+          items:
+            $ref: '#/components/schemas/Avatar'
+        issues:
+          type: integer
+          example: 12
+    CreateProject:
+      type: object
+      properties:
+        projectTitle:
+          type: string
+          example: "Adoddle"
+        projectType:
+          type: string
+          example: "Commercial...."
+        startDate:
+          type: string
+          example: "22/11/23"
+        endDate:
+          type: string
+          example: "22/11/24"
+        projectDescription:
+          type: string
+          example: "Lorem ipsum..."
+        projectRoles:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectRoles'
+    ProjectRoles:
+      type: object
+      properties:
+        role:
+          type: string
+          example: 'Team Lead'
+    Avatar:
+      type: object
+      properties:
+        avatar_url:
+          type: string
+          example: http://simple.ru/picture_1.jpg
+    ProjectID:
+      description: 'Идентификатор проекта'
+      required:
+        - projectId
+      type: object
+      properties:
+        projectID:
+          description: 'Идентификатор проекта'
+          type: integer
+          example: 5
+    TaskList:
+      type: object
+      properties:
+        General:
+          $ref: '#/components/schemas/General'
+        Tasks:
+          $ref: '#/components/schemas/Tasks'
+    General:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Adoddle"
+        avatar_url:
+          type: array
+          items:
+            $ref: '#/components/schemas/Avatar'
+        status:
+          type: string
+          example: "Ontrack"
+        timeSpent:
+          type: string
+          example: "2M:0W:0D"
+        deadline:
+          type: string
+          example: "2M:0W:0D"
+    Tasks:
+      type: array
+      items:
+        $ref: '#/components/schemas/Task'
+    Task:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Make an Aut...."
+        number:
+          type: string
+          example: "#402235"
+        start:
+          type: string
+          example: "Opened 10..."
+        assign:
+          type: string
+          example: "Yash Chori"
+        status:
+          type: string
+          example: "Completed"
+          enum: [Completed, Canceled]
+        startDate:
+          type: string
+          example: "25/5/2023"
+        endDate:
+          type: string
+          example: "25/5/2023"
+        timeAllocated:
+          type: string
+          example: "00:30:2023"
+        avatar_url:
+          type: array
+          items:
+            $ref: '#/components/schemas/Avatar'
+    CreateTask:
+      type: object
+      properties:
+        taskTitle:
+           type: string
+           example: "Make an Aut..."
+        taskType:
+          type: string
+          example: "Тип"
+        taskStartdate:
+          type: string
+          example: "22/11/24"
+        taskEndStart:
+          type: string
+          example: "22/11/24"
+        taskDescription:
+          type: string
+          example: "Lorem inpsum"
+        assignTo:
+          type: object
+          properties:
+            name:
+              type: string
+              example: Yash
+            lastName:
+              type: string
+              example: Chori
+        priority:
+          type: string
+          example: high
+          enum: [middle, high, low]
+        taskAssign:
+          type: string
+          example: pending
+          enum: [pending, in progress, done]
+    TaskID:
+      description: 'Идентификатор задачи'
+      required:
+        - taskId
+      type: object
+      properties:
+        taskID:
+          description: 'Идентификатор задачи'
+          type: integer
+          example: 5 
+    KanbanBoard:
+      type: object
+      properties:
+        backlog:
+          type: array
+          items:
+            $ref: '#/components/schemas/KanbanTasks'
+        inProgress:
+          type: array
+          items:
+            $ref: '#/components/schemas/KanbanTasks'
+        completed:
+          type: array
+          items:
+            $ref: '#/components/schemas/KanbanTasks'
+    KanbanTasks:
+      type: object
+      properties:
+        title: 
+          type: string
+          example: 'Food research'
+        start:
+          type: string
+          example: '12 Days'
+        description:
+          type: string
+          example: 'Food design'
+        secured:
+          type: integer
+          example: 5
+        descussion: 
+          type: integer
+          example: 8
+        avatar_url:
+          type: array
+          items:
+            $ref: '#/components/schemas/Avatar'
+    Profile:
+      type: object
+      properties:
+        avatar_url:
+          type: object
+          items:
+            $ref: '#/components/schemas/Avatar'
+        name:
+          type: string
+          example: "Yash"
+        lastname:
+          type: string
+          example: "Chori"
+        city:
+          type: string
+          example: "Ahmedabad.."
+        country:
+          type: string
+          example: "India"
+        speciality:
+          type: string
+          example: 'UI-intern'
+        numberPhone:
+          type: string
+          example: '+79191860131'
+        email:
+          type: string
+          example: 'rtajb@asite.com'
+        timezone:
+          type: string
+          example: 'PDT-1'
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectProfile'
+    ProjectProfile:
+      type: object
+      properties:
+        projectAvatarUrl:
+          type: string
+          example: http://simple.ru/picture_1.jpg
+        title:
+          type: string
+          example: 'Emo staff'
+    Tokens:
+      type: object
+      properties:
+        accsess_token: 
+          type: string
+          example: TDY7t34tgfhvivir
+        refresh_token:
+          type: string
+          example: TDY7t34tgf
