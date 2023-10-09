@@ -29,6 +29,42 @@ paths:
           description: Регистрация прошла успешно
         '400':
           description: Некорректный запрос
+  /refresh-token:
+    post:
+      tags:
+       - Авторизация
+      summary: Обновляет пару токенов
+      requestBody:
+        description: Обновляет пару токенов
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tokens'
+      responses:
+        '200':
+          description: Обновление пары токенов прошло успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tokens'
+        '403':
+          description: Что-то пошло не так. Попробуйте позже
+  /verification:
+    post:
+      tags:
+       - Авторизация
+      summary: Подверждает валидность почты пользователя
+      requestBody:
+        description: Подтверждает валидность почты пользователя
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyCode'
+      responses:
+        '200':
+          description: Почта успешно подтверждена
+        '403':
+          description: Что-то пошло не так. Попробуйте позже
   /auth:
     post:
       tags:
@@ -230,7 +266,7 @@ paths:
         - Профиль
       summary: Предоставляет возможность редактировать пользователю профиль !!!В зависимости от того, какие поля будут изменяться их и нужно будет передавать, вместе с ID клиента, не изменяемые поля остаются прежними и не затрагиваются.!!!
       parameters:
-        - name: UserID
+        - name: userID
           in: query
           description: ID пользователя
           required: true
@@ -258,16 +294,12 @@ components:
   schemas:
     Registration:
       required:
-        - login
         - password
         - email
         - name
         - lastName
       type: object
       properties:
-        login:
-          type: string
-          example: "ivan_ivanov"
         password:
           type: string
           example: GH567fjbvk
@@ -285,11 +317,11 @@ components:
           example: "Иванович"
     Auth:
       required:
-        - login
+        - email
         - password
       type: object
       properties:
-        login:
+        email:
           type: string
           example: "ivanov@mail.ru"
         password:
@@ -314,10 +346,11 @@ components:
         deadline:
           type: string
           example: "Deadline: 5 April 2023"
-        avatar_url:
+        avatarUrls:
           type: array
           items:
-            $ref: '#/components/schemas/Avatar'
+            type: string
+            example: "https://site.ru/image.jpg"
         issues:
           type: integer
           example: 12
@@ -382,7 +415,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Avatar'
-        status:
+        statusProject:
           type: string
           example: "Ontrack"
         timeSpent:
@@ -562,3 +595,9 @@ components:
         refresh_token:
           type: string
           example: TDY7t34tgf
+    VerifyCode:
+      type: object
+      properties:
+        verifyCode: 
+          type: integer
+          example: 345678
