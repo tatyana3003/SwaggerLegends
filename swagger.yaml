@@ -137,7 +137,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProjectID' 
+                $ref: '#/components/schemas/ProjectId' 
         '400':
           description: 'Передан некорректный запрос'
   /project:
@@ -146,7 +146,7 @@ paths:
         - Проекты
       summary: Удаляет проект
       parameters:
-        - name: projectID
+        - name: projectId
           in: query
           required: true
           schema:
@@ -190,7 +190,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TaskID' 
+                $ref: '#/components/schemas/TaskId' 
         '400':
           description: 'Передан некорректный запрос'
   /task:
@@ -199,7 +199,7 @@ paths:
         - Задачи
       summary: Удаляет задачу
       parameters:
-        - name: taskID
+        - name: taskId
           in: query
           required: true
           schema:
@@ -388,7 +388,7 @@ components:
         avatar_url:
           type: string
           example: http://simple.ru/picture_1.jpg
-    ProjectID:
+    ProjectId:
       description: 'Идентификатор проекта'
       required:
         - projectId
@@ -401,9 +401,9 @@ components:
     TaskList:
       type: object
       properties:
-        General:
+        general:
           $ref: '#/components/schemas/General'
-        Tasks:
+        tasks:
           $ref: '#/components/schemas/Tasks'
     General:
       type: object
@@ -411,7 +411,7 @@ components:
         title:
           type: string
           example: "Adoddle"
-        avatar_url:
+        avatarUrls:
           type: array
           items:
             $ref: '#/components/schemas/Avatar'
@@ -495,7 +495,7 @@ components:
           type: string
           example: pending
           enum: [pending, in progress, done]
-    TaskID:
+    TaskId:
       description: 'Идентификатор задачи'
       required:
         - taskId
@@ -589,10 +589,10 @@ components:
     Tokens:
       type: object
       properties:
-        accsess_token: 
+        accsessToken: 
           type: string
           example: TDY7t34tgfhvivir
-        refresh_token:
+        refreshToken:
           type: string
           example: TDY7t34tgf
     VerifyCode:
