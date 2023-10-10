@@ -39,7 +39,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Tokens'
+              $ref: '#/components/schemas/RefreshToken'
       responses:
         '200':
           description: Обновление пары токенов прошло успешно
@@ -261,18 +261,35 @@ paths:
         '403':
           description: Что-то пошло не так. Попробуйте снова
   /edit/profile:
-    post:
+    put:
       tags:
         - Профиль
-      summary: Предоставляет возможность редактировать пользователю профиль !!!В зависимости от того, какие поля будут изменяться их и нужно будет передавать, вместе с ID клиента, не изменяемые поля остаются прежними и не затрагиваются.!!!
+      summary: Предоставляет возможность редактировать пользователю профиль
       parameters:
-        - name: userID
+        - name: name
           in: query
-          description: ID пользователя
-          required: true
+          description: Имя пользователя
           schema:
-            type: integer
-          example: 2
+            type: string
+            example: "Yash"
+        - name: lastname
+          in: query
+          description: 'Фамилия пользователя'
+          schema:
+            type: string
+            example: "Chori"
+        - name: city
+          in: query
+          description: 'Город'
+          schema:
+            type: string
+            example: "Ahmedabad"  
+      requestBody:
+        description: 'Профиль пользователя'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'    
       responses:
         '200':
           description: Данные успешно обновлены
@@ -334,6 +351,9 @@ components:
     Project:
       type: object
       properties:
+        projectId:
+          type: integer
+          example: 1
         title:
           type: string
           example: "Adoddle"
@@ -414,7 +434,8 @@ components:
         avatarUrls:
           type: array
           items:
-            $ref: '#/components/schemas/Avatar'
+            type: string
+            example: "https://site.ru/image.jpg"
         statusProject:
           type: string
           example: "Ontrack"
@@ -431,6 +452,12 @@ components:
     Task:
       type: object
       properties:
+        taskId:
+          type: integer
+          example: 1
+        projectId:
+          type: integer
+          example: 1
         title:
           type: string
           example: "Make an Aut...."
@@ -445,8 +472,8 @@ components:
           example: "Yash Chori"
         status:
           type: string
-          example: "Completed"
-          enum: [Completed, Canceled]
+          example: "completed"
+          enum: [backlog,in progress,completed,]
         startDate:
           type: string
           example: "25/5/2023"
@@ -457,9 +484,27 @@ components:
           type: string
           example: "00:30:2023"
         avatar_url:
+          type: string
+          example: "https://site.ru/image.jpg"
+        priority:
+          type: string
+          example: high
+          enum: [middle, high, low]
+        ownerTask:
+          type: string
+          example: 'UI Sharks'
+        deadline:
+          type: string
+          example: 'March 24th 2023'
+        documents:
           type: array
           items:
-            $ref: '#/components/schemas/Avatar'
+            type: string
+            example: "https://site.ru/image.jpg"
+        comments:
+          type: array
+          items:
+           $ref: '#/components/schemas/Comment' 
     CreateTask:
       type: object
       properties:
@@ -491,10 +536,10 @@ components:
           type: string
           example: high
           enum: [middle, high, low]
-        taskAssign:
+        taskStatus:
           type: string
-          example: pending
-          enum: [pending, in progress, done]
+          example: backlog
+          enum: [backlog, in progress, completed]
     TaskId:
       description: 'Идентификатор задачи'
       required:
@@ -511,44 +556,21 @@ components:
         backlog:
           type: array
           items:
-            $ref: '#/components/schemas/KanbanTasks'
+            $ref: '#/components/schemas/Tasks'
         inProgress:
           type: array
           items:
-            $ref: '#/components/schemas/KanbanTasks'
+            $ref: '#/components/schemas/Tasks'
         completed:
           type: array
           items:
-            $ref: '#/components/schemas/KanbanTasks'
-    KanbanTasks:
-      type: object
-      properties:
-        title: 
-          type: string
-          example: 'Food research'
-        start:
-          type: string
-          example: '12 Days'
-        description:
-          type: string
-          example: 'Food design'
-        secured:
-          type: integer
-          example: 5
-        descussion: 
-          type: integer
-          example: 8
-        avatar_url:
-          type: array
-          items:
-            $ref: '#/components/schemas/Avatar'
+            $ref: '#/components/schemas/Tasks'
     Profile:
       type: object
       properties:
-        avatar_url:
-          type: object
-          items:
-            $ref: '#/components/schemas/Avatar'
+        avatarUrl:
+          type: string
+          example: "https://site.ru/image.jpg"
         name:
           type: string
           example: "Yash"
@@ -601,3 +623,27 @@ components:
         verifyCode: 
           type: integer
           example: 345678
+    RefreshToken:
+      type: object
+      properties:
+        refreshToken: 
+          type: string
+          example: 'Tjvjl45vvcyi'
+    Comment:
+      type: object
+      properties:
+        avatarUrl:
+          type: string
+          example: "https://site.ru/image.jpg"
+        name:
+          type: string
+          example: "Yash"
+        lastname:
+          type: string
+          example: "Chori"
+        dataComment:
+          type: string
+          example: '1d 24 March 2023 at 18:59'
+        textComment:
+          type: string
+          example: 'technical training'
